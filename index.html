@@ -19,8 +19,8 @@
             --border: rgba(255, 255, 255, 0.1);
             --accent: #38bdf8;
             --accent2: #818cf8;
-            --text: #f1f5f9;
-            --text-muted: #94a3b8;
+            --text: #f1f5f9;      /* Bright white-ish text for Dark Mode */
+            --text-muted: #94a3b8; /* Lighter gray for Dark Mode */
             --grad: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
             --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
         }
@@ -32,20 +32,35 @@
             --border: rgba(0, 0, 0, 0.08);
             --accent: #0284c7;
             --accent2: #4f46e5;
-            --text: #0f172a;
-            --text-muted: #475569;
+            --text: #0f172a;       /* Dark text for Light Mode */
+            --text-muted: #475569; /* Dark gray for Light Mode */
             --grad: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%);
             --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
         }
 
+        /* === CRITICAL FIXES FOR VISIBILITY === */
+        
+        /* 1. Force Headings to use our variable */
+        h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+            color: var(--text);
+        }
+
+        /* 2. Force Bootstrap's text-muted to use our dynamic variable */
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+
+        /* 3. Ensure body text uses our variable */
         body {
             background: var(--bg);
             color: var(--text);
             font-family: 'Plus Jakarta Sans', sans-serif;
             transition: background 0.4s ease, color 0.4s ease;
-            overflow-x: hidden; /* Crucial for slide animations */
+            overflow-x: hidden;
             position: relative;
         }
+
+        /* ===================================== */
 
         /* === NEW ANIMATION SYSTEM === */
         .animate-on-scroll {
@@ -60,13 +75,10 @@
             transform: translate(0, 0);
         }
 
-        /* Directions */
         .slide-up { transform: translateY(60px); }
-        .slide-left { transform: translateX(-60px); } /* Comes from left */
-        .slide-right { transform: translateX(60px); } /* Comes from right */
+        .slide-left { transform: translateX(-60px); }
+        .slide-right { transform: translateX(60px); }
         .zoom-in { transform: scale(0.9); }
-
-        /* Delays */
         .delay-100 { transition-delay: 100ms; }
         .delay-200 { transition-delay: 200ms; }
         .delay-300 { transition-delay: 300ms; }
@@ -283,7 +295,6 @@
             box-shadow: 0 15px 40px -10px rgba(0,0,0,0.5);
         }
         
-        /* Gradient Border on Hover */
         .project-card::after {
             content: "";
             position: absolute;
@@ -333,6 +344,7 @@
             align-items: center;
             gap: 8px;
             cursor: default;
+            color: var(--text); /* Explicit color */
         }
 
         .skill-badge:hover {
@@ -403,7 +415,8 @@
     </style>
 </head>
 
-<body class="light"> <canvas id="particles"></canvas>
+<body class="light"> 
+    <canvas id="particles"></canvas>
 
     <div class="bg-blobs">
         <div class="blob blob-1"></div>
@@ -412,7 +425,7 @@
 
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold gradient-text fs-3" href="#home">Harshit Maurya.</a>
+            <a class="navbar-brand fw-bold gradient-text fs-3" href="#home">Harshit.</a>
 
             <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
                 <span class="navbar-toggler-icon" style="filter: invert(0.5);"></span>
@@ -650,20 +663,17 @@
         /* 1. ANIMATION OBSERVER */
         const observerOptions = {
             threshold: 0.1,
-            rootMargin: "0px 0px -50px 0px" // Trigger slightly before element is fully in view
+            rootMargin: "0px 0px -50px 0px"
         };
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('active');
-                    // Optional: Stop observing once triggered
-                    // observer.unobserve(entry.target); 
                 }
             });
         }, observerOptions);
 
-        // Initial observation
         document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
 
         /* 2. Project Data */
@@ -676,13 +686,10 @@
             { id: 'scholarship', title: 'Scholarship Portal', short: 'Form Automation', desc: 'Digital application system...', tags: ['Frontend', 'Validation'], img: 'https://images.unsplash.com/photo-1588702547923-7093a6c3ba33?auto=format&fit=crop&q=80&w=800' }
         ];
 
-        /* 3. Render Projects with STAGGERED ANIMATION */
+        /* 3. Render Projects */
         const grid = document.getElementById('projectGrid');
-        
         projects.forEach((p, index) => {
-            // Calculate delay: 0ms, 100ms, 200ms, etc.
             const delay = index * 100; 
-            
             grid.innerHTML += `
             <div class="col-md-6 col-lg-4 animate-on-scroll slide-up" style="transition-delay: ${delay}ms">
                 <div class="project-card h-100" onclick="openModal('${p.id}')" style="cursor:pointer">
@@ -701,8 +708,6 @@
                 </div>
             </div>`;
         });
-
-        // Re-observe newly created elements
         document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
 
         /* 4. Modal Logic */
@@ -732,6 +737,7 @@
             }
         }
         
+        // Initial set icon
         if (document.body.classList.contains('light')) {
              document.querySelector('.toggle-btn i').classList.add('fa-sun');
         } else {
@@ -833,10 +839,6 @@
             requestAnimationFrame(animateParticles);
         }
         animateParticles();
-
-        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
     </script>
 </body>
 </html>
-
-
